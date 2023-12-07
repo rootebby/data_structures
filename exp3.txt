@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Stack structure and operations
+struct Stack {
+    int top;
+    unsigned capacity;
+    char* array;
+};
+
+struct Stack* createStack(unsigned capacity) {
+    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+    stack->top = -1;
+    stack->capacity = capacity;
+    stack->array = (char*)malloc(stack->capacity * sizeof(char));
+    return stack;
+}
+
+int isEmpty(struct Stack* stack) {
+    return stack->top == -1;
+}
+
+void push(struct Stack* stack, char item) {
+    stack->array[++stack->top] = item;
+}
+
+char pop(struct Stack* stack) {
+    if (!isEmpty(stack))
+        return stack->array[stack->top--];
+    return '\0';
+}
+
+void displayMessage(int isValid) {
+    if (isValid)
+        printf("The string is valid\n");
+    else
+        printf("The string is invalid\n");
+}
+
+int main() {
+    char input[100];
+    printf("Enter the character string: ");
+    scanf("%s", input);
+
+    struct Stack* stack = createStack(strlen(input));
+
+    int i = 0;
+    char currentChar = input[i];
+
+    // Process characters until '*'
+    while (currentChar != '*') {
+        if (currentChar != 'A' && currentChar != 'B') {
+            printf("Wrong character!!!\n");
+            return 1;
+        }
+        push(stack, currentChar);
+        currentChar = input[++i];
+    }
+
+    // Move to the next character after '*'
+    currentChar = input[++i];
+
+    // Check if the remaining characters form the reverse of the processed string
+    while (currentChar != '\0') {
+        if (currentChar != pop(stack)) {
+            displayMessage(0); // The string is invalid
+            return 0;
+        }
+        currentChar = input[++i];
+    }
+
+    // If the stack is empty at this point, the string is valid
+    displayMessage(isEmpty(stack));
+
+    // Free allocated memory
+    free(stack->array);
+    free(stack);
+
+    return 0;
+}

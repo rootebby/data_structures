@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+
+struct studinfo {
+    int stnr;
+    char name[10];
+    int grade;
+};
+
+void binarySearch(struct studinfo s[], int n, int key);
+
+int main() {
+    struct studinfo s[10];
+    int cnt;
+    FILE *stud_file;
+
+    cnt = 0;
+    stud_file = fopen("C:\\cmpe231\\2009Spring\\student.txt", "r");
+
+    while (!feof(stud_file) && cnt < 10) {
+        fscanf(stud_file, "%d %s %d", &s[cnt].stnr, s[cnt].name, &s[cnt].grade);
+        cnt++;
+    }
+
+    fclose(stud_file);
+
+    // Binary search for a student number
+    int searchKey;
+    printf("Enter a student number to search: ");
+    scanf("%d", &searchKey);
+
+    binarySearch(s, cnt, searchKey);
+
+    return 0;
+}
+
+void binarySearch(struct studinfo s[], int n, int key) {
+    int low = 0, high = n - 1;
+    int mid, position = -1;
+
+    while (low <= high) {
+        mid = (low + high) / 2;
+
+        if (s[mid].stnr == key) {
+            position = mid;
+            break;
+        } else if (s[mid].stnr < key) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    if (position != -1) {
+        printf("Student found at position %d\n", position);
+        printf("Name: %s\n", s[position].name);
+        printf("Grade: %d\n", s[position].grade);
+    } else {
+        printf("Student not found in the data.\n");
+    }
+}
